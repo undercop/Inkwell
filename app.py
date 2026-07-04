@@ -20,7 +20,7 @@ from core.auth.ui import render_auth_page
 
 st.set_page_config(
     page_title=f"{APP_NAME} — Book Recommender & Blog Writer",
-    page_icon="🖋️",
+    page_icon="🌿", # Updated to fit the organic/floral theme
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -47,11 +47,11 @@ with st.sidebar:
 
 pages = {
     "": [
-        st.Page("pages/home.py", title="Home", icon="🏠", default=True),
+        st.Page("pages/home.py", title="Home", icon = "🌸", default=True),
     ],
     "Tools": [
-        st.Page("pages/book_recommender.py", title="Book Recommender", icon="📚"),
-        st.Page("pages/blog_writer.py", title="Blog Writer", icon="✍️"),
+        st.Page("pages/book_recommender.py", title="Book Recommender"),
+        st.Page("pages/blog_writer.py", title="Blog Writer"),
     ],
 }
 

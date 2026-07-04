@@ -19,26 +19,67 @@ inject_base_styles()
 
 IMAGES_DIR = BASE_DIR / "images"
 
+# ----------------------------------------------------------------------------
+# Styling (scoped to this page's content + global background overrides)
+# ----------------------------------------------------------------------------
 st.markdown(
     f"""
     <style>
+    /* Global Background Overrides */
+    [data-testid="stAppViewContainer"] {{
+        background-color: #FDFBF7 !important;
+        background-image: radial-gradient(rgba(139, 90, 43, 0.04) 1px, transparent 1px);
+        background-size: 24px 24px;
+    }}
+    [data-testid="stHeader"] {{
+        background-color: transparent !important;
+    }}
+    [data-testid="stSidebar"] {{
+        background-color: #F4EAE0 !important;
+        border-right: 1px solid rgba(139, 90, 43, 0.1) !important;
+    }}
+    /* Ensure markdown text stays dark */
+    .stMarkdown p, .stMarkdown li, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4, .stMarkdown span {{
+        color: #4A3623 !important;
+    }}
+
+    /* Page-Specific UI */
     .blog-hero {{
-        padding: 1.8rem 2rem;
-        border-radius: 18px;
-        background: linear-gradient(135deg, {BLOG}22, {BLOG}08);
-        border: 1px solid {BORDER};
-        margin-bottom: 1.4rem;
+        padding: 2.8rem 2.5rem 2.4rem 2.5rem;
+        border-radius: 24px;
+        background: linear-gradient(135deg, #F4EAE0 0%, #FDFBF7 100%);
+        border: 1px solid rgba(139, 90, 43, 0.1);
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(139, 90, 43, 0.03);
+    }}
+    .blog-hero::before {{
+        content: "";
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(226,209,195,0.5) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
     }}
     .blog-hero h1 {{
-        font-size: 2rem;
+        font-family: 'Fraunces', serif;
+        font-size: 2.4rem;
         font-weight: 700;
-        margin: 0;
-        color: #f2f3fa;
+        margin-bottom: 0.5rem;
+        color: #3E2723;
+        position: relative;
+        z-index: 1;
     }}
-    .blog-hero p {{
-        color: #b8bcd0;
-        margin: 0.3rem 0 0 0;
-        font-size: 0.98rem;
+    .blog-hero p {{ 
+        color: #7A6652; 
+        font-size: 1.1rem; 
+        margin: 0; 
+        position: relative;
+        z-index: 1;
     }}
     </style>
     """,

@@ -11,53 +11,125 @@ from core.ui.theme import inject_base_styles, BOOKS, BORDER
 inject_base_styles()
 
 # ----------------------------------------------------------------------------
-# Styling (scoped to this page's content, using the shared "BOOKS" accent)
+# Styling (scoped to this page's content + global background overrides)
 # ----------------------------------------------------------------------------
 st.markdown(
     f"""
     <style>
+    /* Global Background Overrides */
+    [data-testid="stAppViewContainer"] {{
+        background-color: #FDFBF7 !important;
+        background-image: radial-gradient(rgba(139, 90, 43, 0.04) 1px, transparent 1px);
+        background-size: 24px 24px;
+    }}
+    [data-testid="stHeader"] {{
+        background-color: transparent !important;
+    }}
+    [data-testid="stSidebar"] {{
+        background-color: #F4EAE0 !important;
+        border-right: 1px solid rgba(139, 90, 43, 0.1) !important;
+    }}
+    /* Ensure markdown text outside cards stays dark */
+    .stMarkdown p, .stMarkdown li {{
+        color: #4A3623 !important;
+    }}
+
+    /* Page-Specific UI */
     .hero {{
-        padding: 2.2rem 2rem 1.6rem 2rem;
-        border-radius: 20px;
-        background: linear-gradient(135deg, {BOOKS}22, {BOOKS}08);
-        border: 1px solid {BORDER};
-        margin-bottom: 1.6rem;
+        padding: 2.8rem 2.5rem 2.4rem 2.5rem;
+        border-radius: 24px;
+        background: linear-gradient(135deg, #F4EAE0 0%, #FDFBF7 100%);
+        border: 1px solid rgba(139, 90, 43, 0.1);
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(139, 90, 43, 0.03);
+    }}
+    .hero::before {{
+        content: "";
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(226,209,195,0.5) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
     }}
     .hero h1 {{
-        font-size: 2.2rem;
+        font-family: 'Fraunces', serif;
+        font-size: 2.4rem;
         font-weight: 700;
-        margin-bottom: 0.3rem;
-        color: #f2f3fa;
+        margin-bottom: 0.5rem;
+        color: #3E2723;
+        position: relative;
+        z-index: 1;
     }}
-    .hero p {{ color: #b8bcd0; font-size: 1.0rem; margin: 0; }}
+    .hero p {{ 
+        color: #7A6652; 
+        font-size: 1.1rem; 
+        margin: 0; 
+        position: relative;
+        z-index: 1;
+    }}
 
+    /* Book Cards */
     .book-card {{
-        background: rgba(255,255,255,0.04);
-        border: 1px solid {BORDER};
-        border-radius: 16px;
-        padding: 0.8rem;
-        margin-bottom: 1.2rem;
-        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        background: #FFFFFF;
+        border: 1px solid rgba(139, 90, 43, 0.1);
+        border-radius: 20px;
+        padding: 1.2rem;
+        margin-bottom: 1.5rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
         height: 100%;
+        box-shadow: 0 4px 16px rgba(139, 90, 43, 0.02);
     }}
     .book-card:hover {{
-        transform: translateY(-4px);
-        border-color: {BOOKS}80;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        transform: translateY(-6px);
+        border-color: rgba(139, 90, 43, 0.25);
+        box-shadow: 0 16px 40px rgba(139, 90, 43, 0.08);
     }}
     .book-cover-wrap {{
         width: 100%;
         aspect-ratio: 2 / 3;
         overflow: hidden;
-        border-radius: 10px;
-        margin-bottom: 0.6rem;
-        background: #1c1e29;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        background: #F3EBE1;
+        box-shadow: 0 6px 16px rgba(139, 90, 43, 0.06);
     }}
     .book-cover-wrap img {{ width: 100%; height: 100%; object-fit: cover; }}
-    .book-title {{ font-size: 0.98rem; font-weight: 600; line-height: 1.25; margin-bottom: 0.15rem; }}
-    .book-author {{ font-size: 0.82rem; color: #9b9fc2; margin-bottom: 0.4rem; }}
-    .book-desc {{ font-size: 0.8rem; color: #c3c5d9; line-height: 1.4; }}
-    .empty-state {{ text-align: center; padding: 3rem 1rem; color: #8b8fae; }}
+    
+    .book-title {{ 
+        font-family: 'Fraunces', serif;
+        font-size: 1.1rem; 
+        font-weight: 600; 
+        line-height: 1.25; 
+        margin-bottom: 0.25rem; 
+        color: #3E2723;
+    }}
+    .book-author {{ 
+        font-size: 0.85rem; 
+        color: #8B7355; 
+        margin-bottom: 0.6rem; 
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+    }}
+    .book-desc {{ 
+        font-size: 0.9rem; 
+        color: #7A6652; 
+        line-height: 1.5; 
+    }}
+    
+    .empty-state {{ text-align: center; padding: 4rem 1rem; }}
+    .empty-state h3 {{
+        font-family: 'Fraunces', serif;
+        color: #3E2723;
+        margin-bottom: 0.5rem;
+        font-size: 1.6rem;
+    }}
+    .empty-state p {{ color: #8B7355; font-size: 1.1rem; }}
     </style>
     """,
     unsafe_allow_html=True,
@@ -146,11 +218,12 @@ else:
                 authors_str = format_authors(row["authors"])
                 desc = truncate_description(row["description"])
                 cover = row["large_thumbnail"]
+                # Updated the fallback placeholder to match the warm theme!
                 st.markdown(
                     f"""
                     <div class="book-card">
                         <div class="book-cover-wrap">
-                            <img src="{cover}" onerror="this.src='https://placehold.co/400x600/1c1e29/8b8fae?text=No+Cover'"/>
+                            <img src="{cover}" onerror="this.src='https://placehold.co/400x600/F3EBE1/8B7355?text=No+Cover'"/>
                         </div>
                         <div class="book-title">{row['title']}</div>
                         <div class="book-author">by {authors_str}</div>

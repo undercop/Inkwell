@@ -1,0 +1,7 @@
+[theme]
+base = "light"
+primaryColor = "#8B5A2B" # Warm, earthy accent brown
+backgroundColor = "#FCFAF8" # Warm floral white for the main app
+secondaryBackgroundColor = "#F3EBE1" # Soft taupe for sidebars and cards
+textColor = "#3E2723" # Deep espresso brown for readability
+font = "sans serif"

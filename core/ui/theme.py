@@ -13,20 +13,24 @@ one product, not three separate demos glued together.
 Each page keeps its own accent for its hero/cards, but everything else
 (background, borders, typography, spacing) is shared from here.
 """
+
 import streamlit as st
-
 APP_NAME = "Inkwell"
-APP_TAGLINE = "AI tools for reading & writing"
+APP_TAGLINE = "Your AI reading and writing desk"
+BRAND = "#8B5A2B"  # Earthy accent brown
+BOOKS = "#C28B5E"  # Warm terracotta/brown
+BLOG = "#A68A6D"   # Soft taupe
+BORDER = "rgba(139, 90, 43, 0.15)"
+TEXT_MUTED = "#7A6652"
 
-BRAND = "#e8b34c"   # warm gold — shared brand accent
-BOOKS = "#8b7cff"   # violet — Book Recommender identity
-BLOG = "#ff6f91"    # coral — Blog Writer identity
+
+
 
 BG_DEEP = "#0b0d13"
 BG_PANEL = "rgba(255,255,255,0.04)"
-BORDER = "rgba(255,255,255,0.09)"
-TEXT = "#eef0f6"
-TEXT_MUTED = "#9b9fc2"
+
+TEXT = "#391b14"
+
 
 _FONTS_AND_BASE_CSS = f"""
 <style>
@@ -50,7 +54,7 @@ section[data-testid="stSidebar"] {{
     border-right: 1px solid {BORDER};
 }}
 section[data-testid="stSidebar"] * {{
-    color: #d9dbea;
+    color: {TEXT};
 }}
 
 /* Brand block at the top of the sidebar */
