@@ -1,0 +1,11 @@
+.env
+venv/
+__pycache__/
+*.pyc
+
+# Auth: contains hashed passwords + cookie signing key
+config/auth_config.yaml
+
+# Generated / local data
+data/chroma_db/
+data/blogs/*.md

@@ -1,0 +1,25 @@
+# --- Shared ---
+streamlit>=1.36
+python-dotenv
+pandas
+numpy
+
+# --- Auth ---
+streamlit-authenticator>=0.4,<0.5
+pyyaml
+
+# --- Book recommender ---
+langchain
+langchain-community
+langchain-text-splitters
+chromadb
+sentence-transformers
+
+# --- Blog writer ---
+langgraph
+langchain-groq
+langchain-openai
+pydantic>=2
+
+# Tavily search tool used by backend research node
+tavily-python
