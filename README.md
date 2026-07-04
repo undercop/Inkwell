@@ -34,24 +34,56 @@ This creates `data/chroma_db/` — a persisted index. Re-run this script
 only if `tagged_description.txt` changes. The app will auto-detect and
 load this instead of re-embedding everything on every launch.
 
-## 4. Run the merged app
+## 4. Set up Supabase auth
+
+1. Create a free project at [supabase.com](https://supabase.com).
+2. Go to **Project Settings → API**, copy the **Project URL** and the
+   **anon / public key** (not `service_role`) into your `.env`:
+   ```
+   SUPABASE_URL=https://your-project-ref.supabase.co
+   SUPABASE_KEY=your_anon_key_here
+   
+   ```
+3. By default, Supabase requires email confirmation before a new
+   signup can log in. For local testing you can turn this off under
+   **Authentication → Providers → Email → Confirm email**, or just
+   confirm via the email Supabase sends.
+
+## 5. Run the merged app
 
 ```bash
 streamlit run app.py
 ```
 
-You'll get a sidebar with two pages: **Book Recommender** and
-**Blog Writer**. Generated blogs are saved to `data/blogs/*.md` and
-listed in the "Past blogs" panel on the Blog Writer page.
+You'll land on a standalone login/signup screen — no sidebar, no nav,
+no way to reach the tools without an account. Use the **Log in / Sign
+up** toggle to switch modes on that same screen. After a successful
+login you're redirected straight to the **Home** page, and the sidebar
+with **Book Recommender** and **Blog Writer** appears.
+
+A refresh token is stored in a browser cookie, so refreshing the page
+keeps you logged in for ~30 days. Click **Log out** in the sidebar to
+end the session (this also clears the cookie).
+
+Generated blogs are saved to `data/blogs/*.md` and listed in the "Past
+blogs" panel on the Blog Writer page.
 
 ## Project layout
 
 ```
-app.py                        entry point — navigation only
+app.py                        entry point — auth gate + navigation
 pages/
+  home.py                     landing page
   book_recommender.py         UI for the book recommender
   blog_writer.py              UI for the blog writer (was frontend.py)
 core/
+  auth/
+    supabase_client.py         cached Supabase client
+    service.py                 sign_up / sign_in / sign_out / restore_session
+    session.py                 session_state <-> cookie bridge
+    ui.py                      standalone login/signup screen
+  ui/
+    theme.py                   shared design tokens
   book_recommender/
     data.py                   cached data + vector DB loading
     recommend.py              pure recommendation logic

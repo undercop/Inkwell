@@ -4,9 +4,9 @@ python-dotenv
 pandas
 numpy
 
-# --- Auth ---
-streamlit-authenticator>=0.4,<0.5
-pyyaml
+# --- Auth (Supabase) ---
+supabase>=2.4,<3
+streamlit-cookies-controller
 
 # --- Book recommender ---
 langchain
