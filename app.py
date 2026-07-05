@@ -20,7 +20,7 @@ from core.auth.ui import render_auth_page
 
 st.set_page_config(
     page_title=f"{APP_NAME} — Book Recommender & Blog Writer",
-    page_icon="🌿", # Updated to fit the organic/floral theme
+    page_icon="🌿",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -32,28 +32,34 @@ if session is None:
     st.stop()
 
 # ----------------------------------------------------------------------------
-# Logged in — sidebar branding + nav. Nothing above this point renders any
-# app page, so there's no way to reach Book Recommender / Blog Writer
-# without a valid session.
+# Logged in — sidebar order: brand -> nav -> page-specific content -> logout
 # ----------------------------------------------------------------------------
 inject_base_styles()
+
+# 1. Branding at the very top
 sidebar_brand()
 
+# 2. Nav menu (Home + Tools) right under the brand
+pages = {
+    "": [
+        st.Page("pages/home.py", title="Home", icon=":material/home:", default=True),
+    ],
+    "Tools": [
+        st.Page("pages/book_recommender.py", title="Book Recommender", icon=":material/menu_book:"),
+        st.Page("pages/blog_writer.py", title="Blog Writer", icon=":material/edit:"),
+    ],
+}
+pg = st.navigation(pages)
+
+# 3. Run the selected page — any page-specific sidebar widgets (filters,
+#    settings, etc.) that a page adds via `st.sidebar` will render here,
+#    below the nav and above the logout block, since it executes now.
+pg.run()
+
+# 4. Signed-in info + logout, pinned to the bottom
 with st.sidebar:
+    st.divider()
     st.caption(f"Signed in as **{session.email}**")
     if st.button("Log out", use_container_width=True):
         clear_session()
         st.rerun()
-
-pages = {
-    "": [
-        st.Page("pages/home.py", title="Home", icon = "🌸", default=True),
-    ],
-    "Tools": [
-        st.Page("pages/book_recommender.py", title="Book Recommender"),
-        st.Page("pages/blog_writer.py", title="Blog Writer"),
-    ],
-}
-
-pg = st.navigation(pages)
-pg.run()

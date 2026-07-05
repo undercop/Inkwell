@@ -4,6 +4,21 @@ from core.auth.service import sign_up, sign_in
 from core.auth.session import persist_session
 from core.ui.theme import inject_base_styles, APP_NAME, APP_TAGLINE, BRAND, BOOKS, BLOG
 
+import base64
+from pathlib import Path
+
+def get_base64_image(image_path: str) -> str:
+    """Read an image file and return a base64-encoded string."""
+    with open(image_path, "rb") as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+# Resolve paths relative to this script's location (safer than "../assets/...")
+ASSETS_DIR = Path(__file__).parent.parent.parent / "assets"
+
+lamp_b64 = get_base64_image(ASSETS_DIR / "lamp.png")
+login_b64 = get_base64_image(ASSETS_DIR / "login.jpg")
+
 def _hide_app_chrome() -> None:
     """This page has no sidebar / nav — hide the (otherwise empty) sidebar
     and its collapse arrow so it reads as a distinct, standalone screen."""
@@ -99,10 +114,10 @@ def _auth_page_styles() -> None:
         .auth-brand-panel {{
             background: linear-gradient(135deg, #F4EAE0 0%, #E8D8C8 100%);
             border: 2px solid #FFFFFF;
-            padding: 4rem 3rem;
+            padding: 2.5rem 2rem 2rem;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             height: 100%;
             min-height: 520px;
             border-radius: 32px;
@@ -123,18 +138,32 @@ def _auth_page_styles() -> None:
         .auth-brand-panel::after {{
             content: "";
             position: absolute;
-            bottom: -20%; right: -10%;
-            width: 250px; height: 250px;
-            background: radial-gradient(circle, rgba(226,209,195,0.7) 0%, transparent 70%);
+            bottom: -15%; right: -15%;
+            width: 320px; height: 320px;
+            background: radial-gradient(circle, rgba(226,209,195,0.85) 0%, transparent 70%);
             border-radius: 50%; pointer-events: none;
         }}
         
+        .brand-title-row {{
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.3rem;
+            z-index: 1;
+            flex-shrink: 0;
+        }}
+        .brand-title-row img {{
+            width: 54px;
+            height: auto;
+            border-radius: 16px;
+            box-shadow: 0 10px 24px rgba(139, 90, 43, 0.12);
+        }}
         .brand-mark {{
             font-family: 'Fraunces', serif;
             font-size: 2.6rem;
             font-weight: 700;
             color: #4A3623;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0;
             z-index: 1;
             letter-spacing: -0.5px;
         }}
@@ -142,11 +171,48 @@ def _auth_page_styles() -> None:
         
         .brand-sub {{
             color: #7A6652;
-            font-size: 1.1rem;
-            max-width: 300px;
-            line-height: 1.6;
-            margin-bottom: 2.5rem;
+            font-size: 1.05rem;
+            max-width: 320px;
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
             z-index: 1;
+            flex-shrink: 0;
+        }}
+
+        /* tagline directly under the title — tighter bottom margin before the image */
+        .brand-title-row + .brand-sub {{
+            margin-bottom: 1rem;
+        }}
+
+        /* the image now grows to fill remaining vertical space in the panel */
+        .brand-illustration {{
+             width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    max-width: 100%;
+    height: auto;
+    max-height: 320px;
+    object-fit: cover;
+    border-radius: 20px;
+    margin: 0.5rem 0;
+    position: relative;
+    filter: drop-shadow(0 8px 20px rgba(139, 90, 43, 0.10));
+
+    /* fade all edges evenly into the panel background */
+    -webkit-mask-image: radial-gradient(ellipse 75% 60% at center, black 60%, transparent 100%);
+    mask-image: radial-gradient(ellipse 75% 90% at center, black 60%, transparent 100%);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    z-index: 1;
+        }}
+
+        /* closing caption — own flex row below the image, can't overlap it */
+        .brand-sub.brand-caption {{
+            margin-top: 0.75rem;
+            margin-bottom: 0;
+            flex-shrink: 0;
         }}
         
         .auth-shelf {{
@@ -228,10 +294,10 @@ def render_auth_page() -> None:
     inject_base_styles()
     _hide_app_chrome()
     _auth_page_styles()
-    
-    # ------------------------------------------------------------------ 
+
+    # ------------------------------------------------------------------
     # INJECT HTML FOR BACKGROUND ANIMATION
-    # ------------------------------------------------------------------ 
+    # ------------------------------------------------------------------
     st.markdown("""
         <div class="auth-bg-animation">
             <div class="squares">
@@ -259,26 +325,21 @@ def render_auth_page() -> None:
         st.markdown(
             f"""
             <div class="auth-brand-panel">
-                <div class="brand-mark">🌿 {APP_NAME}<span class="dot">.</span></div>
-                <div class="brand-sub">{APP_TAGLINE} — sign in to find your next
-                read or draft your next post.</div>
-                <div class="auth-shelf">
-                    <div class="spine" style="height:44px; background:{BOOKS};"></div>
-                    <div class="spine" style="height:60px; background:{BLOG};"></div>
-                    <div class="spine" style="height:34px; background:{BOOKS};"></div>
-                    <div class="spine" style="height:52px; background:{BOOKS};"></div>
-                    <div class="spine" style="height:40px; background:{BLOG};"></div>
-                    <div class="spine" style="height:64px; background:{BOOKS};"></div>
-                    <div class="spine" style="height:30px; background:{BLOG};"></div>
+                <div class="brand-title-row">
+                    <img src="data:image/png;base64,{lamp_b64}" alt="Lamp logo" />
+                    <div class="brand-mark">{APP_NAME}<span class="dot">.</span></div>
                 </div>
+                <div class="brand-sub">{APP_TAGLINE}</div>
+                <img class="brand-illustration" src="data:image/jpeg;base64,{login_b64}" alt="Login illustration" />
+                <div class="brand-sub brand-caption">Sign in to find your next read or draft your next post.</div>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
     with right:
-        st.write("") # Slight vertical balance
-        
+        st.write("")  # Slight vertical balance
+
         if mode == "login":
             st.markdown("<h2 class='auth-header'>Welcome back</h2>", unsafe_allow_html=True)
             st.markdown("<p class='auth-sub'>Log in to continue.</p>", unsafe_allow_html=True)
